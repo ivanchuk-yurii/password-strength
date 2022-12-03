@@ -1,31 +1,36 @@
 <div class="app row justify-content-center">
-  <form class="form-group col-md-3 form" [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
-    <label for="inputPassword">Password</label>
-    <div class="inputWrapper">
+  <form class="form-group col-md-3 form">
+    <label for="input-password">Password</label>
+    <div class="input-wrapper">
       <input
-        [type]="isShowPassword ? 'password' : 'text'"
+        id="input-password"
+        [type]="!isShowPassword ? 'password' : 'text'"
         class="form-control"
-        id="inputPassword"
         placeholder="Password"
-        formControlName="password"
+        [formControl]="password"
       >
-      <i
-        id="togglePassword"
+      <button
+        type="button"
         [ngClass]="[
+          'eye',
           'bi',
           'eye-icon',
-          isShowPassword ? 'bi-eye-slash' : 'bi-eye'
+          !isShowPassword ? 'bi-eye-slash' : 'bi-eye'
         ]"
-        (click)="showPassword()"
-    ></i>
+        (click)="togglePassword()"
+      >
+      </button>
     </div>
     <app-password-bars
-      [passwordToCheck]="this.passwordForm.value.password"
+      [passwordToCheck]="password.value"
       (passwordStrength)="passwordValid($event)"
     ></app-password-bars>
+    <p class="text-danger hint" *ngIf="!passwordIsValid && password.dirty">
+      Should contain 8 characters, at least 1 letter, digit and symbol
+    </p>
     <button
       type="submit"
-      class="btn btn-primary"
+      class="btn btn-primary submit-btn"
       [disabled]="!passwordIsValid"
     >
       Submit

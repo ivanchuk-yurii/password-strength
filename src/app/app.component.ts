@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -7,27 +7,15 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  isShowPassword = true;
-  passwordForm: FormGroup;
+  isShowPassword = false;
+  password = new FormControl('', Validators.required);
   passwordIsValid = false;
 
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit() {
-    this.passwordForm = this.fb.group({
-      password: ['', Validators.required],
-    });
-}
-
-  showPassword() {
+  togglePassword() {
     this.isShowPassword = !this.isShowPassword;
   }
 
   passwordValid(event) {
     this.passwordIsValid = event;
-  }
-
-  onSubmit() {
-    console.log(this.passwordForm.value);
   }
 }

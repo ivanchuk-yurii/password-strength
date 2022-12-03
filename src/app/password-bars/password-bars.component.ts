@@ -1,6 +1,11 @@
-import { Component, OnInit, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
-import { reduce } from 'rxjs';
+import { Component, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
 
+enum Strength {
+  eightSymbols = 1,
+  easy = 2,
+  medium = 3,
+  strong = 4
+}
 
 @Component({
   selector: 'app-password-bars',
@@ -10,30 +15,27 @@ import { reduce } from 'rxjs';
 export class PasswordBarsComponent {
   @Input() public passwordToCheck: string;
   @Output() passwordStrength = new EventEmitter<boolean>();
-  private colors = ['red', 'yellow', 'green'];
-  bar1: string;
-  bar2: string;
-  bar3: string;
+  colors = ['red', 'yellow', 'green'];
+  barsColors = [];
 
-  checkStrength(password) {
-    let strength = 0;
-    strength = password.length >= 8 ? strength += 10 : 0;
+  checkStrength(password: string): number {
+    let strength = password.length >= 8 ? Strength.eightSymbols : 0;
 
     const letters = /[a-zA-Z]+/.test(password);
     const numbers = /[0-9]+/.test(password);
-    const regex = /[$-/:-?{-~!"^_@`\[\]]/g;
-    const symbols = regex.test(password);
+    const symbolRegex = /[$-/:-?{-~!"^_@`\[\]]/g;
+    const symbols = symbolRegex.test(password);
 
     const flags = [letters, numbers, symbols];
 
     let passedMatches = 0;
     for (const flag of flags) {
-      passedMatches += flag === true ? 1 : 0;
+      if (flag) {
+        passedMatches++;
+      }
     }
 
-    strength = (passedMatches === 1) ? strength += 1 : strength;
-    strength = (passedMatches === 2) ? strength += 2 : strength;
-    strength = (passedMatches === 3) ? strength += 3 : strength;
+    strength += passedMatches;
 
     return strength;
   }
@@ -41,31 +43,36 @@ export class PasswordBarsComponent {
   ngOnChanges(changes: { [propName: string]: SimpleChange }): void {
     const password = changes.passwordToCheck.currentValue;
     const passStrength = this.checkStrength(password);
-    this.setBarColors(4, '#ddd');
-    if (password) {
+    this.barsColors = [];
+
+    if (password.length >= 8) {
       const c = this.getColor(passStrength);
       this.setBarColors(c.index, c.color);
     }
 
-    passStrength === 13
+    if (password && password.length < 8) {
+      this.setBarColors(3, 'red')
+    }
+
+    passStrength === Strength.strong
       ? this.passwordStrength.emit(true)
       : this.passwordStrength.emit(false);
   }
 
-  private getColor(strength) {
+  private getColor(strength: Strength) {
     let index = 0;
     switch (strength) {
-      case 11:
+      case Strength.easy:
         index = 0;
         break;
-      case 12:
+      case Strength.medium:
         index = 1;
         break;
-      case 13:
+      case Strength.strong:
         index = 2;
         break;
       default:
-        index = 3;
+        index;
     }
 
     return {
@@ -75,8 +82,8 @@ export class PasswordBarsComponent {
   }
 
   private setBarColors(count, col) {
-    for (let n = 1; n <= count; n++) {
-      this['bar' + n] = col;
+    for (let n = 0; n < count; n++) {
+      this.barsColors.push(col);
     }
   }
 }
