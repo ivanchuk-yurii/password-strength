@@ -13,18 +13,17 @@ enum Strength {
   styleUrls: ['./password-bars.component.scss']
 })
 export class PasswordBarsComponent {
-  @Input() public passwordToCheck: string;
+  @Input() passwordToCheck: string;
   @Output() passwordStrength = new EventEmitter<boolean>();
   colors = ['red', 'yellow', 'green'];
   barsColors = [];
 
-  checkStrength(password: string): number {
+  checkStrength(password: string): Strength {
     let strength = password.length >= 8 ? Strength.eightSymbols : 0;
 
     const letters = /[a-zA-Z]+/.test(password);
     const numbers = /[0-9]+/.test(password);
-    const symbolRegex = /[$-/:-?{-~!"^_@`\[\]]/g;
-    const symbols = symbolRegex.test(password);
+    const symbols = /[$-/:-?{-~!"^_@`\[\]]/g.test(password);
 
     const flags = [letters, numbers, symbols];
 
@@ -54,9 +53,7 @@ export class PasswordBarsComponent {
       this.setBarColors(3, 'red')
     }
 
-    passStrength === Strength.strong
-      ? this.passwordStrength.emit(true)
-      : this.passwordStrength.emit(false);
+    this.passwordStrength.emit(passStrength === Strength.strong);
   }
 
   private getColor(strength: Strength) {

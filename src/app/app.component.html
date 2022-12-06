@@ -1,11 +1,10 @@
 <div class="app row justify-content-center">
   <form class="form-group col-md-3 form">
-    <label for="input-password">Password</label>
-    <div class="input-wrapper">
+    <label class="input-wrapper">
+      Password
       <input
-        id="input-password"
-        [type]="!isShowPassword ? 'password' : 'text'"
-        class="form-control"
+        [type]="isShowPassword ? 'text' : 'password'"
+        class="form-control input-password"
         placeholder="Password"
         [formControl]="password"
       >
@@ -15,12 +14,12 @@
           'eye',
           'bi',
           'eye-icon',
-          !isShowPassword ? 'bi-eye-slash' : 'bi-eye'
+          isShowPassword ? 'bi-eye-slash' : 'bi-eye'
         ]"
         (click)="togglePassword()"
       >
       </button>
-    </div>
+    </label>
     <app-password-bars
       [passwordToCheck]="password.value"
       (passwordStrength)="passwordValid($event)"

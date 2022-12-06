@@ -8,7 +8,10 @@ import { FormControl, Validators } from '@angular/forms';
 })
 export class AppComponent {
   isShowPassword = false;
-  password = new FormControl('', Validators.required);
+  password = new FormControl('',
+    [Validators.required,
+    Validators.minLength(8)]
+  );
   passwordIsValid = false;
 
   togglePassword() {
